@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Twinkling Star Observatory</title>
+    <title>Pentagram Constellation VR</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-environment-component@1.3.2/dist/aframe-environment-component.min.js"></script>
   </head>
@@ -17,46 +17,53 @@
         </a-entity>
       </a-entity>
 
-      <a-entity id="star-cluster" position="0 2 -6">
-        
-        <a-octahedron class="star" position="-2 1.5 0" radius="0.15" color="#FFF"
-                      material="emissive: #FFF; emissiveIntensity: 2"
-                      animation="property: scale; from: 1 1 1; to: 1.5 1.5 1.5; dir: alternate; dur: 1000; loop: true">
-        </a-octahedron>
+      <a-text id="guide-text" 
+              value="SYSTEM READY: EXPLORE THE STARS" 
+              position="-2 0.5 -3" 
+              color="#00FFFF" 
+              width="4"
+              font="exo2bold">
+      </a-text>
 
-        <a-octahedron class="star" position="0 3 -1" radius="0.15" color="#FFF"
-                      material="emissive: #FFF; emissiveIntensity: 2"
-                      animation="property: rotation; to: 0 360 0; loop: true; dur: 4000"
-                      animation__twinkle="property: scale; from: 0.8 0.8 0.8; to: 1.2 1.2 1.2; dir: alternate; dur: 1500; loop: true">
-        </a-octahedron>
+      <a-entity id="pentagram" position="0 2.5 -5">
+        <a-octahedron class="clickable-star" position="0 1.5 0" radius="0.12" color="white" material="emissive: #FFF; emissiveIntensity: 1"></a-octahedron>
+        <a-octahedron class="clickable-star" position="1.4 0.5 0" radius="0.12" color="white" material="emissive: #FFF; emissiveIntensity: 1"></a-octahedron>
+        <a-octahedron class="clickable-star" position="0.9 -1 0" radius="0.12" color="white" material="emissive: #FFF; emissiveIntensity: 1"></a-octahedron>
+        <a-octahedron class="clickable-star" position="-0.9 -1 0" radius="0.12" color="white" material="emissive: #FFF; emissiveIntensity: 1"></a-octahedron>
+        <a-octahedron class="clickable-star" position="-1.4 0.5 0" radius="0.12" color="white" material="emissive: #FFF; emissiveIntensity: 1"></a-octahedron>
 
-        <a-octahedron class="star" position="2 1.5 0" radius="0.15" color="#FFF"
-                      material="emissive: #FFF; emissiveIntensity: 2"
-                      animation="property: scale; from: 1 1 1; to: 1.4 1.4 1.4; dir: alternate; dur: 1200; loop: true">
-        </a-octahedron>
-
-        <a-entity id="constellation-lines" 
-                  line="start: -2 1.5 0; end: 0 3 -1; color: #00FFFF; visible: false"
-                  line__2="start: 0 3 -1; end: 2 1.5 0; color: #00FFFF; visible: false">
+        <a-entity id="lines" visible="false">
+          <a-entity line="start: 0 1.5 0; end: 0.9 -1 0; color: #FFD700"></a-entity>
+          <a-entity line="start: 0.9 -1 0; end: -1.4 0.5 0; color: #FFD700"></a-entity>
+          <a-entity line="start: -1.4 0.5 0; end: 1.4 0.5 0; color: #FFD700"></a-entity>
+          <a-entity line="start: 1.4 0.5 0; end: -0.9 -1 0; color: #FFD700"></a-entity>
+          <a-entity line="start: -0.9 -1 0; end: 0 1.5 0; color: #FFD700"></a-entity>
         </a-entity>
       </a-entity>
 
-      <a-text value="Stars chamak rahe hain! Inhe dekho..." position="-1.5 0.5 -3" color="yellow" width="4"></a-text>
-
       <script>
-        const stars = document.querySelectorAll('.star');
-        const lines = document.querySelector('#constellation-lines');
+        const stars = document.querySelectorAll('.clickable-star');
+        const linesContainer = document.querySelector('#lines');
+        const infoText = document.querySelector('#guide-text');
 
         stars.forEach(star => {
-          star.addEventListener('click', function () {
-            // Interaction: Star orange ho jayega aur line dikhegi
-            this.setAttribute('color', '#FFA500');
-            lines.setAttribute('line', 'visible', true);
-            lines.setAttribute('line__2', 'visible', true);
+          // Hover logic
+          star.addEventListener('mouseenter', function () {
+            this.setAttribute('animation', { property: 'scale', to: '2.5 2.5 2.5', dur: 300 });
+            infoText.setAttribute('value', 'ANOMALY DETECTED: SCALING STAR...');
+            infoText.setAttribute('color', '#FFCC00');
           });
-        });
-      </script>
 
-    </a-scene>
-  </body>
-</html>
+          star.addEventListener('mouseleave', function () {
+            this.setAttribute('animation', { property: 'scale', to: '1 1 1', dur: 300 });
+            infoText.setAttribute('value', 'SEARCHING FOR CONSTELLATION...');
+            infoText.setAttribute('color', '#00FFFF');
+          });
+
+          // Click/Gaze logic
+          star.addEventListener('click', function () {
+            this.setAttribute('material', 'emissiveIntensity', 15);
+            this.setAttribute('color', '#FFD700'); 
+            linesContainer.setAttribute('visible', 'true');
+            
+            // Text update on success
