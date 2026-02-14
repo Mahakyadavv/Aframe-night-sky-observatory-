@@ -1,69 +1,63 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>VR Night Sky Observatory</title>
+    <title>Interactive VR Night Sky</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-environment-component@1.3.2/dist/aframe-environment-component.min.js"></script>
   </head>
   <body>
     <a-scene>
-      <a-assets></a-assets>
-
-      <a-entity environment="preset: starry; groundColor: #050505; grid: cross; gridColor: #222"></a-entity>
+      <a-entity environment="preset: starry; ground: none; fog: 0"></a-entity>
 
       <a-entity camera look-controls position="0 1.6 0">
-        <a-entity cursor="fuse: true; fuseTimeout: 1000"
+        <a-entity cursor="fuse: true; fuseTimeout: 800"
                   position="0 0 -1"
                   geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
-                  material="color: #FF0000; shader: flat">
-          <a-animation begin="fusing" easing="ease-in" attribute="scale" fill="forwards" from="1 1 1" to="0.1 0.1 0.1" dur="1000"></a-animation>
+                  material="color: #00FF00; shader: flat"
+                  animation__fusing="property: scale; from: 1 1 1; to: 0.1 0.1 0.1; startEvents: fusing; dur: 800"
+                  animation__mouseleave="property: scale; to: 1 1 1; startEvents: mouseleave; dur: 100">
         </a-entity>
       </a-entity>
 
-      <a-entity id="constellation" position="0 0 -5">
+      <a-entity position="0 2 -5">
         
-        <a-sphere class="star" position="-1.5 3 -2" radius="0.15" color="white" 
+        <a-octahedron class="star" position="-2 1 0" radius="0.15" color="yellow"
+                      animation="property: rotation; to: 0 360 0; loop: true; dur: 3000">
+        </a-octahedron>
+
+        <a-sphere class="star" position="0 2 0" radius="0.15" color="white"
                   material="emissive: #FFF; emissiveIntensity: 2">
         </a-sphere>
 
-        <a-sphere class="star" position="0 4 -3" radius="0.15" color="white"
+        <a-sphere class="star" position="2 1 0" radius="0.15" color="white"
                   material="emissive: #FFF; emissiveIntensity: 2">
         </a-sphere>
 
-        <a-sphere class="star" position="1.5 3 -2" radius="0.15" color="white"
-                  material="emissive: #FFF; emissiveIntensity: 2">
-        </a-sphere>
-
-        <a-entity id="line-container">
-            <a-entity id="line1" line="start: -1.5 3 -2; end: 0 4 -3; color: yellow; visible: false"></a-entity>
-            <a-entity id="line2" line="start: 0 4 -3; end: 1.5 3 -2; color: yellow; visible: false"></a-entity>
+        <a-entity id="sky-line" 
+                  line="start: -2 1 0; end: 0 2 0; color: #00FFFF; visible: false"
+                  line__2="start: 0 2 0; end: 2 1 0; color: #00FFFF; visible: false">
         </a-entity>
       </a-entity>
 
-      <a-text value="Look at the stars to connect them!" position="-2 0.5 -3" color="white" width="4"></a-text>
+      <a-text value="Cursor ko star par roko!" position="-1.5 0.5 -3" color="lime"></a-text>
 
       <script>
-        // Sare stars ko select karo
         const stars = document.querySelectorAll('.star');
-        const line1 = document.querySelector('#line1');
-        const line2 = document.querySelector('#line2');
+        const lines = document.querySelector('#sky-line');
 
         stars.forEach(star => {
-          // 'click' trigger hota hai jab cursor fuse hota hai (1 second dekhne par)
+          // Jab cursor star par 800ms tak rukega
           star.addEventListener('click', function () {
-            console.log("Star Clicked!"); // Console mein check karne ke liye
-            this.setAttribute('color', 'yellow');
-            this.setAttribute('scale', '1.5 1.5 1.5');
-            
-            // Dono lines ko visible kar do
-            line1.setAttribute('line', 'visible', true);
-            line2.setAttribute('line__2', 'visible', true); // Note: line__2 is for multiple lines on one entity, but here we used separate entities for safety
-            line2.setAttribute('line', 'visible', true);
+            // Movement/Interaction dikhane ke liye changes:
+            this.setAttribute('color', 'orange');
+            this.setAttribute('scale', '2 2 2'); // Star bada ho jayega
+            lines.setAttribute('line', 'visible', true);
+            lines.setAttribute('line__2', 'visible', true);
+            console.log("Interaction Successful!");
           });
         });
       </script>
 
-      <a-light type="ambient" color="#444"></a-light>
     </a-scene>
   </body>
 </html>
