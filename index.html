@@ -7,7 +7,7 @@
   </head>
   <body>
     <a-scene>
-      <a-entity environment="preset: starry; ground: none; fog: 0"></a-entity>
+      <a-entity id="sky" environment="preset: starry; ground: none; skyType: color; skyColor: #000; stars: 0"></a-entity>
 
       <a-entity camera look-controls position="0 1.6 0">
         <a-entity cursor="fuse: true; fuseTimeout: 1000"
@@ -17,22 +17,17 @@
         </a-entity>
       </a-entity>
 
-      <a-text id="guide-text" 
-              value="SYSTEM READY: EXPLORE THE STARS" 
-              position="-2 0.5 -3" 
-              color="#00FFFF" 
-              width="4"
-              font="exo2bold">
-      </a-text>
+      <a-text id="status-text" value="PROTOCOL: LOCATE THE NODES" position="-1.5 0.5 -3" color="#00FFFF" width="4"></a-text>
 
-      <a-entity id="pentagram" position="0 2.5 -5">
-        <a-octahedron class="clickable-star" position="0 1.5 0" radius="0.12" color="white" material="emissive: #FFF; emissiveIntensity: 1"></a-octahedron>
-        <a-octahedron class="clickable-star" position="1.4 0.5 0" radius="0.12" color="white" material="emissive: #FFF; emissiveIntensity: 1"></a-octahedron>
-        <a-octahedron class="clickable-star" position="0.9 -1 0" radius="0.12" color="white" material="emissive: #FFF; emissiveIntensity: 1"></a-octahedron>
-        <a-octahedron class="clickable-star" position="-0.9 -1 0" radius="0.12" color="white" material="emissive: #FFF; emissiveIntensity: 1"></a-octahedron>
-        <a-octahedron class="clickable-star" position="-1.4 0.5 0" radius="0.12" color="white" material="emissive: #FFF; emissiveIntensity: 1"></a-octahedron>
+      <a-entity id="pentagram-group" position="0 2.5 -5">
+        
+        <a-octahedron class="star-node" position="0 1.5 0" radius="0.15" color="white"></a-octahedron>
+        <a-octahedron class="star-node" position="1.4 0.5 0" radius="0.15" color="white"></a-octahedron>
+        <a-octahedron class="star-node" position="0.9 -1 0" radius="0.15" color="white"></a-octahedron>
+        <a-octahedron class="star-node" position="-0.9 -1 0" radius="0.15" color="white"></a-octahedron>
+        <a-octahedron class="star-node" position="-1.4 0.5 0" radius="0.15" color="white"></a-octahedron>
 
-        <a-entity id="lines" visible="false">
+        <a-entity id="star-lines" visible="false">
           <a-entity line="start: 0 1.5 0; end: 0.9 -1 0; color: #FFD700"></a-entity>
           <a-entity line="start: 0.9 -1 0; end: -1.4 0.5 0; color: #FFD700"></a-entity>
           <a-entity line="start: -1.4 0.5 0; end: 1.4 0.5 0; color: #FFD700"></a-entity>
@@ -42,28 +37,45 @@
       </a-entity>
 
       <script>
-        const stars = document.querySelectorAll('.clickable-star');
-        const linesContainer = document.querySelector('#lines');
-        const infoText = document.querySelector('#guide-text');
+        const nodes = document.querySelectorAll('.star-node');
+        const lines = document.querySelector('#star-lines');
+        const statusText = document.querySelector('#status-text');
+        const sky = document.querySelector('#sky');
 
-        stars.forEach(star => {
-          // Hover logic
-          star.addEventListener('mouseenter', function () {
-            this.setAttribute('animation', { property: 'scale', to: '2.5 2.5 2.5', dur: 300 });
-            infoText.setAttribute('value', 'ANOMALY DETECTED: SCALING STAR...');
-            infoText.setAttribute('color', '#FFCC00');
+        nodes.forEach(node => {
+          // A. Cursor Move (Hover) -> Size Change
+          node.addEventListener('mouseenter', function () {
+            this.setAttribute('animation', 'property: scale; to: 2.5 2.5 2.5; dur: 200');
+            statusText.setAttribute('value', 'ANALYZING STAR COORDINATES...');
+            statusText.setAttribute('color', '#FF00FF');
           });
 
-          star.addEventListener('mouseleave', function () {
-            this.setAttribute('animation', { property: 'scale', to: '1 1 1', dur: 300 });
-            infoText.setAttribute('value', 'SEARCHING FOR CONSTELLATION...');
-            infoText.setAttribute('color', '#00FFFF');
+          node.addEventListener('mouseleave', function () {
+            this.setAttribute('animation', 'property: scale; to: 1 1 1; dur: 200');
+            statusText.setAttribute('value', 'PROTOCOL: LOCATE THE NODES');
+            statusText.setAttribute('color', '#00FFFF');
           });
 
-          // Click/Gaze logic
-          star.addEventListener('click', function () {
-            this.setAttribute('material', 'emissiveIntensity', 15);
-            this.setAttribute('color', '#FFD700'); 
-            linesContainer.setAttribute('visible', 'true');
+          // B. Click (Gaze) -> Glow, Lines, and Background Stars Reveal
+          node.addEventListener('click', function () {
+            // Glow effect on nodes
+            nodes.forEach(n => {
+              n.setAttribute('material', 'emissive: #00FF00; emissiveIntensity: 10');
+              n.setAttribute('color', '#00FF00');
+            });
+
+            // Show constellation
+            lines.setAttribute('visible', 'true');
+
+            // Reveal background stars and change sky
+            sky.setAttribute('environment', 'stars: 5000; skyColor: #020205');
             
-            // Text update on success
+            // Final Text update
+            statusText.setAttribute('value', 'CONSTELLATION UNLOCKED: PENTAGRAM');
+            statusText.setAttribute('color', '#00FF00');
+          });
+        });
+      </script>
+    </a-scene>
+  </body>
+</html>
