@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>VR Night Sky Observatory</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component@1.3.2/dist/aframe-environment-component.min.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      <a-entity environment="preset: starry; groundColor: #050505; grid: none"></a-entity>
+
+      <a-entity camera look-controls position="0 1.6 0">
+        <a-entity cursor="fuse: true; fuseTimeout: 500"
+                  position="0 0 -1"
+                  geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                  material="color: white; shader: flat">
+        </a-entity>
+      </a-entity>
+
+      <a-entity id="constellation">
+        
+        <a-sphere class="star" position="-2 5 -8" radius="0.1" color="white" 
+                  animation__glow="property: material.emissiveIntensity; from: 1; to: 2; dir: alternate; dur: 1000; loop: true"
+                  material="emissive: #FFF; emissiveIntensity: 1">
+        </a-sphere>
+
+        <a-sphere class="star" position="0 6 -10" radius="0.1" color="white"
+                  material="emissive: #FFF; emissiveIntensity: 1">
+        </a-sphere>
+
+        <a-sphere class="star" position="2 5 -8" radius="0.1" color="white"
+                  material="emissive: #FFF; emissiveIntensity: 1">
+        </a-sphere>
+
+        <a-entity id="constellation-line" 
+                  line="start: -2 5 -8; end: 0 6 -10; color: cyan; visible: false"
+                  line__2="start: 0 6 -10; end: 2 5 -8; color: cyan; visible: false">
+        </a-entity>
+      </a-entity>
+
+      <a-circle position="0 0.01 0" radius="5" rotation="-90 0 0" color="#222"></a-circle>
+
+      <script>
+        // Jab kisi bhi star par cursor jayega ya click hoga
+        const stars = document.querySelectorAll('.star');
+        const lines = document.querySelector('#constellation-line');
+
+        stars.forEach(star => {
+          star.addEventListener('click', function () {
+            // Line ko visible kar do
+            lines.setAttribute('line', 'visible', true);
+            lines.setAttribute('line__2', 'visible', true);
+            // Star ka color change karke feedback do
+            this.setAttribute('color', 'yellow');
+          });
+        });
+      </script>
+
+      <a-light type="ambient" color="#222"></a-light>
+    </a-scene>
+  </body>
+</html>
